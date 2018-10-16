@@ -46,8 +46,11 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful()){
                     RandomResponse randomUser = response.body();
                     if (randomUser != null){
-                        for(Result result : randomUser.getResults())
-                            resultList.add(result);
+                        
+                        for(int i = 0; i < randomUser.getResults().size(); i++){
+                            resultList.add(randomUser.getResults().get(i));
+                        }
+
 
                         generateResultList();
                     }

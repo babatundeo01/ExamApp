@@ -6,9 +6,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.consultants.examapp.models.Result;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +37,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
         //String value = list.get(i);
         myViewHolder.textView.setText(resultlist.get(i).getName().getFirst() +" "+ resultlist.get(i).getName().getLast());
+        Picasso.get().load(resultlist.get(i).getPicture().getLarge()).into(myViewHolder.imageView);
     }
 
     @Override
@@ -54,9 +57,11 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView textView;
+        ImageView imageView;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.textView);
+            imageView = itemView.findViewById(R.id.imageView);
             textView.setOnClickListener(this);
         }
 
