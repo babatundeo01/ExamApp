@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.consultants.examapp.api.RandomAPI;
 import com.example.consultants.examapp.models.RandomResponse;
@@ -29,11 +30,11 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recycler;
     List<Result> resultList;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         client = prepareRetrofitClient();
         randomAPI = client.create(RandomAPI.class);
@@ -41,25 +42,28 @@ public class MainActivity extends AppCompatActivity {
         randomAPI.getRandomUsers(30).enqueue(new Callback<RandomResponse>() {
             @Override
             public void onResponse(Call<RandomResponse> call, Response<RandomResponse> response) {
+                resultList = new ArrayList<>();
                 if (response.isSuccessful()){
                     RandomResponse randomUser = response.body();
-                      //  resultList = randomUser.getResults();
+                    if (randomUser != null){
+                        for(Result result : randomUser.getResults())
+                            resultList.add(result);
 
-                    generateResultList((ArrayList<Result>) randomUser.getResults());
+                        generateResultList();
+                    }
 
-                    //Log.d(TAG, "onResponse: "+ resultList);
-                    //List<Result> results = (List<Result>) resultList.get(0);
+                    Log.d(TAG, "onResponse: "+ resultList);
                     myRecyclerAdapter.updateDataSet(resultList);
                 }
             }
 
             @Override
             public void onFailure(Call<RandomResponse> call, Throwable t) {
-                Log.e(TAG, "onResponse: Error " + t);
+                Toast.makeText(MainActivity.this, "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
             }
         });
 
-        //myRecyclerAdapter.updateDataSet(resultList);
+
     }
 
     private Retrofit prepareRetrofitClient() {
@@ -70,11 +74,10 @@ public class MainActivity extends AppCompatActivity {
         return client;
     }
 
-    private void generateResultList(ArrayList<Result> resultList) {
+    private void generateResultList() {
         recycler = findViewById(R.id.recycler);
-        myRecyclerAdapter = new MyRecyclerAdapter(this, resultList);
+        myRecyclerAdapter = new MyRecyclerAdapter(resultList);
         recycler.setAdapter(myRecyclerAdapter);
-
         recycler.setLayoutManager(new LinearLayoutManager(this));
     }
 }
